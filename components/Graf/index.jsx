@@ -49,7 +49,7 @@ function Graf({ v, data, isMobile, maxLength }) {
           credits: { enabled: false },
           chart: {
             type: "bar",
-            height: isMobile ? "40%" : "20%",
+            height: "30%",
           },
           xAxis: {
             categories: ["Rusko", "Ukrajina"],

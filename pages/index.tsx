@@ -76,7 +76,7 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">
+      <h1 className="text-3xl font-bold pb-6">
         Porovnejte si ověřené ztráty vojenské techniky
       </h1>
       <MultipleSelect
@@ -105,7 +105,10 @@ const Home: NextPage = () => {
           <Link href="https://www.oryxspioenkop.com/2022/02/attack-on-europe-documenting-equipment.html">
             Oryx
           </Link>
-          , stav k {}
+          , stav k{" "}
+          {new Date(updated.data.updated).toLocaleString("cs-CZ", {
+            dateStyle: "short",
+          })}
         </Typography>
       </Container>
     </div>
