@@ -1,8 +1,12 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import { useData, dictionary } from "../hooks";
-import { useQuery } from "@tanstack/react-query";
+import { MultipleSelect, Legenda, Graf } from "../components";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+
+const isMobile = false;
 
 const translate = (string: string) => {
   const result = dictionary.find(word => {
@@ -13,6 +17,13 @@ const translate = (string: string) => {
 };
 
 const Home: NextPage = () => {
+  const [processed, setProcessed] = useState([]);
+  const [vybrane, setVybrane] = useState([
+    "Všechny druhy vojenské techniky",
+    "Tanky",
+    "Bojová vozidla pěchoty",
+  ]);
+  const [maxLength, setMaxLength] = useState(2020);
   const { data, isSuccess }: any = useData(
     "https://data.irozhlas.cz/oryx-cache/totals_by_type.csv",
     "data"
@@ -22,20 +33,83 @@ const Home: NextPage = () => {
     "updated"
   );
 
-  const processed = useQuery(
-    ["processed"],
-    () => {
-      return data.map((item: { equipment_type: string }) => {
+  useEffect(() => {
+    const vybranaData = processed.filter((d: { type: string }) =>
+      vybrane.includes(d.type)
+    );
+    const newMax = vybranaData.reduce(
+      (acc: number, curr: { type_total: number }) => {
+        const total = curr.type_total;
+        return total > acc ? total : acc;
+      },
+      0
+    );
+    setMaxLength(newMax);
+  }, [vybrane, processed]);
+
+  useEffect(() => {
+    if (typeof data === "undefined") {
+      return;
+    }
+    const result = data.map(
+      (item: {
+        equipment_type: string;
+        destroyed: string;
+        abandoned: string;
+        captured: string;
+        damaged: string;
+        type_total: string;
+      }) => {
         return {
           ...item,
+          destroyed: +item.destroyed,
+          abandoned: +item.abandoned,
+          captured: +item.captured,
+          damaged: +item.damaged,
+          type_total: +item.type_total,
           type: translate(item.equipment_type),
         };
-      });
-    },
-    { enabled: isSuccess }
-  );
+      }
+    );
+    setProcessed(result);
+  }, [data]);
 
-  return <div>ahoj</div>;
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">
+        Porovnejte si ověřené ztráty vojenské techniky
+      </h1>
+      <MultipleSelect
+        data={processed}
+        vybrane={vybrane}
+        setVybrane={setVybrane}
+      />
+      <Legenda isMobile={isMobile} />
+      {processed.length !== 0 &&
+        vybrane.map((v, i) => (
+          <Graf
+            key={i}
+            v={v}
+            data={processed}
+            isMobile={isMobile}
+            maxLength={maxLength}
+          ></Graf>
+        ))}
+      <Container>
+        <Typography
+          variant="caption"
+          display="flex"
+          sx={{ justifyContent: "flex-end" }}
+        >
+          Zdroj dat:&nbsp;
+          <Link href="https://www.oryxspioenkop.com/2022/02/attack-on-europe-documenting-equipment.html">
+            Oryx
+          </Link>
+          , stav k {}
+        </Typography>
+      </Container>
+    </div>
+  );
 };
 
 export default Home;
