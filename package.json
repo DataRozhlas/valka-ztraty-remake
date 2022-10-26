@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "production": "aws s3 sync out s3://datarozhlas/znicena-technika --acl public-read && aws cloudfront create-invalidation --distribution-id E3ABKG4QXPTL3P --paths '/znicena-technika/*'"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
@@ -19,6 +20,7 @@
     "highcharts-react-official": "^3.1.0",
     "ky": "^0.31.4",
     "ky-universal": "^0.11.0",
+    "lodash": "^4.17.21",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"

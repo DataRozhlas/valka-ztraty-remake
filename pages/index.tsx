@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
-import { useData, dictionary } from "../hooks";
+import { useData, dictionary, usePostMessageWithHeight } from "../hooks";
 import { MultipleSelect, Legenda, Graf } from "../components";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -17,7 +17,11 @@ const translate = (string: string) => {
 };
 
 const Home: NextPage = () => {
+  const { containerRef, postHeightMessage } = usePostMessageWithHeight(
+    "cro_znicena_technika"
+  );
   const [processed, setProcessed] = useState([]);
+  const [datum, setDatum] = useState("");
   const [vybrane, setVybrane] = useState([
     "Všechny druhy vojenské techniky",
     "Tanky",
@@ -74,8 +78,22 @@ const Home: NextPage = () => {
     setProcessed(result);
   }, [data]);
 
+  useEffect(() => {
+    if (typeof updated.data === "undefined") {
+      return;
+    }
+    const result = new Date(updated.data.updated).toLocaleString("cs-CZ", {
+      dateStyle: "short",
+    });
+    setDatum(result);
+  }, [updated]);
+
+  useEffect(() => {
+    postHeightMessage();
+  }, [vybrane, postHeightMessage]);
+
   return (
-    <div>
+    <div ref={containerRef}>
       <h1 className="text-3xl font-bold pb-6">
         Porovnejte si ověřené ztráty vojenské techniky
       </h1>
@@ -105,10 +123,7 @@ const Home: NextPage = () => {
           <Link href="https://www.oryxspioenkop.com/2022/02/attack-on-europe-documenting-equipment.html">
             Oryx
           </Link>
-          , stav k{" "}
-          {new Date(updated.data.updated).toLocaleString("cs-CZ", {
-            dateStyle: "short",
-          })}
+          , stav k {datum}
         </Typography>
       </Container>
     </div>

@@ -22,7 +22,7 @@ const fetchData = async (url: string) => {
     return result;
   }
   if (url.slice(-4) === "json") {
-    const result = await ky.get(url).json();
+    const result: any = await ky.get(url).json();
     return result;
   }
 };

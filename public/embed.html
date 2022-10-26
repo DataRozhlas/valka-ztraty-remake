@@ -1,0 +1,19 @@
+<iframe
+  src="https://data.irozhlas.cz/znicena-technika"
+  scrolling="no"
+  frameborder="0"
+  allowtransparency="true"
+  style="width: 0; min-width: 100% !important"
+  height="730"
+  id="cro_znicena_technika"
+></iframe>
+<script type="text/javascript">
+  window.addEventListener("message", function (a) {
+    if (void 0 !== a.data["cro-embed-height"])
+      for (var e in a.data["cro-embed-height"])
+        if ("cro_znicena_technika" == e) {
+          var d = document.querySelector("#cro_znicena_technika");
+          d && (d.style.height = a.data["cro-embed-height"][e] + "px");
+        }
+  });
+</script>
