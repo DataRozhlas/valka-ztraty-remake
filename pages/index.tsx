@@ -83,7 +83,7 @@ const Home: NextPage = () => {
       return;
     }
     const result = new Date(updated.data.updated).toLocaleString("cs-CZ", {
-      dateStyle: "short",
+      dateStyle: "medium",
     });
     setDatum(result);
   }, [updated]);
